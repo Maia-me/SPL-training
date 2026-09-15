@@ -89,6 +89,42 @@
     margin:0 0 28px;
     max-width:58ch;
   }
+  .length-picker{
+    margin-bottom:22px;
+  }
+  .length-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--paper-dim);
+    margin-bottom:8px;
+  }
+  .length-options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .length-btn{
+    font-family:var(--mono);
+    font-size:13px;
+    background:var(--navy-900);
+    color:var(--paper-dim);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:8px 14px;
+    cursor:pointer;
+  }
+  .length-btn:hover{
+    border-color:var(--amber-dim);
+    color:var(--paper);
+  }
+  .length-btn.active{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:var(--navy-950);
+    font-weight:600;
+  }
+
   .subject-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -383,6 +419,10 @@
       <h1>Choose a subject</h1>
       <p>Questions are drawn at random from the official SPL question bank. Every answer is checked instantly, and a short explanation appears if you get one wrong.</p>
     </div>
+    <div class="length-picker">
+      <div class="length-label">QUESTIONS PER ROUND</div>
+      <div class="length-options" id="lengthOptions"></div>
+    </div>
     <div class="subject-grid" id="subjectGrid"></div>
   </div>
 
@@ -412,7 +452,8 @@
 <footer>ECQB-PPL SPL question bank &middot; local practice tool, not an official exam</footer>
 
 <script>
-const ROUND_LENGTH = 15; // questions per practice round
+const LENGTH_CHOICES = [10, 15, 25, 50, 'all'];
+let roundLength = 15; // default questions per practice round
 
 let ALL_QUESTIONS = [];
 let SUBJECTS = []; // [{code, name, count}]
@@ -422,6 +463,7 @@ let currentAnswered = false;
 let sessionCorrect = 0;
 let sessionTotal = 0;
 let roundCorrect = 0;
+let lastSubjectCode = null;
 
 const screenPicker = document.getElementById('screenPicker');
 const screenQuiz = document.getElementById('screenQuiz');
@@ -461,7 +503,23 @@ async function init(){
   }
   SUBJECTS = Object.values(bySubject).sort((a,b)=>a.code.localeCompare(b.code));
 
+  renderLengthOptions();
   renderSubjectGrid();
+}
+
+function renderLengthOptions(){
+  const container = document.getElementById('lengthOptions');
+  container.innerHTML = '';
+  LENGTH_CHOICES.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'length-btn' + (roundLength === choice ? ' active' : '');
+    btn.textContent = choice === 'all' ? 'All' : choice;
+    btn.onclick = () => {
+      roundLength = choice;
+      renderLengthOptions();
+    };
+    container.appendChild(btn);
+  });
 }
 
 function renderSubjectGrid(){
@@ -491,8 +549,9 @@ function renderSubjectGrid(){
 }
 
 function startRound(subjectCode){
+  lastSubjectCode = subjectCode;
   const source = subjectCode ? ALL_QUESTIONS.filter(q=>q.subject_code===subjectCode) : ALL_QUESTIONS;
-  const n = Math.min(ROUND_LENGTH, source.length);
+  const n = roundLength === 'all' ? source.length : Math.min(roundLength, source.length);
   currentPool = shuffle(source).slice(0, n);
   currentIndex = 0;
   roundCorrect = 0;
@@ -630,9 +689,7 @@ document.getElementById('backBtn').onclick = () => {
   screenPicker.classList.remove('hidden');
 };
 document.getElementById('retryBtn').onclick = () => {
-  const subjectCode = currentPool.length && currentPool.every(q=>q.subject_code===currentPool[0].subject_code)
-    ? currentPool[0].subject_code : null;
-  startRound(subjectCode);
+  startRound(lastSubjectCode);
 };
 document.getElementById('homeBtn').onclick = () => {
   screenSummary.classList.add('hidden');
