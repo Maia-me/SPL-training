@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPL Trainer — Sailplane Theory Exam Prep</title>
+<style>
+  :root{
+    --navy-950:#0b1626;
+    --navy-900:#0f1e33;
+    --navy-800:#15283f;
+    --navy-700:#1c344f;
+    --navy-600:#274769;
+    --paper:#eef1f0;
+    --paper-dim:#b9c4ce;
+    --amber:#e8a33d;
+    --amber-dim:#c98a2e;
+    --teal:#4fae8e;
+    --rust:#c1543f;
+    --rule:#2a3f5c;
+    --mono: "IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+    --sans: "IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--navy-950);
+    color:var(--paper);
+    font-family:var(--sans);
+    min-height:100vh;
+    line-height:1.5;
+  }
+  a{color:var(--amber);}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 28px;
+    border-bottom:1px solid var(--rule);
+    background:linear-gradient(180deg,var(--navy-900),var(--navy-950));
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .brand-mark{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.12em;
+    color:var(--amber);
+    border:1px solid var(--amber-dim);
+    padding:2px 7px;
+    border-radius:3px;
+  }
+  .brand-name{
+    font-weight:600;
+    font-size:18px;
+    letter-spacing:.01em;
+  }
+  .topbar-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .lang-toggle{
+    display:flex;
+    border:1px solid var(--rule);
+    border-radius:5px;
+    overflow:hidden;
+  }
+  .lang-btn{
+    font-family:var(--mono);
+    font-size:12px;
+    background:var(--navy-900);
+    color:var(--paper-dim);
+    border:none;
+    padding:6px 11px;
+    cursor:pointer;
+  }
+  .lang-btn.active{
+    background:var(--amber);
+    color:var(--navy-950);
+    font-weight:600;
+  }
+  .score-pill{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--paper-dim);
+    display:flex;
+    gap:16px;
+  }
+  .score-pill b{color:var(--paper);font-weight:600;}
+  .score-pill .correct{color:var(--teal);}
+  .score-pill .incorrect{color:var(--rust);}
+
+  /* ---------- layout ---------- */
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:32px 20px 80px;
+  }
+
+  /* ---------- subject picker ---------- */
+  .intro h1{
+    font-size:26px;
+    margin:6px 0 6px;
+    font-weight:650;
+  }
+  .intro p{
+    color:var(--paper-dim);
+    margin:0 0 28px;
+    max-width:58ch;
+  }
+
+  .test-card{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:linear-gradient(135deg,#2b3f22,#1c2e1a);
+    border:1px solid #5c8a3a;
+    border-radius:8px;
+    padding:20px 20px;
+    cursor:pointer;
+    color:var(--paper);
+    font-family:var(--sans);
+    margin-bottom:28px;
+  }
+  .test-card:hover{ border-color:#7fb355; }
+  .test-card-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    color:#8fcf5e;
+  }
+  .test-card-title{
+    font-size:18px;
+    font-weight:650;
+    margin-top:5px;
+  }
+  .test-card-desc{
+    font-size:13px;
+    color:var(--paper-dim);
+    margin-top:6px;
+  }
+
+  .section-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--paper-dim);
+    margin:0 0 10px;
+  }
+
+  .length-picker{
+    margin-bottom:22px;
+  }
+  .length-options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .length-btn{
+    font-family:var(--mono);
+    font-size:13px;
+    background:var(--navy-900);
+    color:var(--paper-dim);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:8px 14px;
+    cursor:pointer;
+  }
+  .length-btn:hover{
+    border-color:var(--amber-dim);
+    color:var(--paper);
+  }
+  .length-btn.active{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:var(--navy-950);
+    font-weight:600;
+  }
+
+  .subject-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  @media(max-width:560px){ .subject-grid{grid-template-columns:1fr;} }
+
+  .subject-card{
+    background:var(--navy-900);
+    border:1px solid var(--rule);
+    border-radius:6px;
+    padding:16px 16px;
+    text-align:left;
+    cursor:pointer;
+    color:var(--paper);
+    font-family:var(--sans);
+    transition:border-color .15s ease, transform .1s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .subject-card:hover{
+    border-color:var(--amber-dim);
+  }
+  .subject-card:active{ transform:scale(.99); }
+  .subject-code{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--amber);
+    letter-spacing:.08em;
+  }
+  .subject-title{
+    font-size:15px;
+    font-weight:600;
+    margin-top:4px;
+  }
+  .subject-count{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--paper-dim);
+    margin-top:8px;
+  }
+  .subject-card.all{
+    grid-column:1 / -1;
+    background:linear-gradient(135deg,var(--navy-800),var(--navy-700));
+    border-color:var(--amber-dim);
+  }
+
+  /* ---------- quiz screen ---------- */
+  .quiz-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .back-link{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--paper-dim);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:4px 0;
+  }
+  .back-link:hover{ color:var(--amber); }
+  .progress-tag{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--paper-dim);
+  }
+  .progress-bar-track{
+    height:3px;
+    background:var(--navy-800);
+    border-radius:2px;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .progress-bar-fill{
+    height:100%;
+    background:var(--amber);
+    transition:width .2s ease;
+  }
+
+  .qcard{
+    background:var(--navy-900);
+    border:1px solid var(--rule);
+    border-radius:8px;
+    padding:24px 24px 22px;
+  }
+  .qmeta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .qsubject{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--amber);
+    letter-spacing:.08em;
+  }
+  .qpoints{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--paper-dim);
+  }
+  .qtext{
+    font-size:17px;
+    line-height:1.55;
+    white-space:pre-line;
+    margin:0 0 16px;
+  }
+  .qimage{
+    margin:0 0 18px;
+    border:1px solid var(--rule);
+    border-radius:4px;
+    overflow:hidden;
+    background:#fff;
+  }
+  .qimage img{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+  .qimage-missing{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--paper-dim);
+    background:var(--navy-800);
+    border:1px dashed var(--rule);
+    border-radius:4px;
+    padding:14px;
+    margin:0 0 18px;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .option{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    text-align:left;
+    background:var(--navy-800);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:12px 14px;
+    cursor:pointer;
+    color:var(--paper);
+    font-family:var(--sans);
+    font-size:14.5px;
+    line-height:1.4;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .option:hover:not(.locked){
+    border-color:var(--amber-dim);
+  }
+  .option .opt-letter{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--paper-dim);
+    border:1px solid var(--rule);
+    border-radius:3px;
+    width:20px;
+    height:20px;
+    min-width:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:1px;
+  }
+  .option.correct{
+    border-color:var(--teal);
+    background:rgba(79,174,142,.12);
+  }
+  .option.correct .opt-letter{
+    border-color:var(--teal);
+    color:var(--teal);
+  }
+  .option.incorrect{
+    border-color:var(--rust);
+    background:rgba(193,84,63,.12);
+  }
+  .option.incorrect .opt-letter{
+    border-color:var(--rust);
+    color:var(--rust);
+  }
+  .option.locked{
+    cursor:default;
+  }
+  .option.dim{
+    opacity:.55;
+  }
+  .option.chosen-neutral{
+    border-color:var(--amber);
+    background:rgba(232,163,61,.10);
+  }
+  .option.chosen-neutral .opt-letter{
+    border-color:var(--amber);
+    color:var(--amber);
+  }
+
+  .result-banner{
+    margin-top:16px;
+    padding:14px 16px;
+    border-radius:5px;
+    font-size:14px;
+    line-height:1.55;
+  }
+  .result-banner.correct{
+    background:rgba(79,174,142,.1);
+    border:1px solid var(--teal);
+  }
+  .result-banner.incorrect{
+    background:rgba(193,84,63,.1);
+    border:1px solid var(--rust);
+  }
+  .result-title{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    margin-bottom:6px;
+  }
+  .result-banner.correct .result-title{ color:var(--teal); }
+  .result-banner.incorrect .result-title{ color:var(--rust); }
+  .result-explanation{ color:var(--paper); }
+
+  .next-row{
+    margin-top:20px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .next-btn{
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:14px;
+    background:var(--amber);
+    color:var(--navy-950);
+    border:none;
+    border-radius:5px;
+    padding:11px 20px;
+    cursor:pointer;
+  }
+  .next-btn:hover{ background:#f0b355; }
+  .next-btn:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+  }
+
+  /* ---------- summary screen (practice) ---------- */
+  .summary{
+    text-align:center;
+    padding:40px 0;
+  }
+  .summary .big{
+    font-family:var(--mono);
+    font-size:52px;
+    color:var(--amber);
+    font-weight:600;
+  }
+  .summary .sub{
+    color:var(--paper-dim);
+    margin-top:6px;
+  }
+  .summary-actions{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-top:26px;
+    flex-wrap:wrap;
+  }
+  .ghost-btn{
+    font-family:var(--sans);
+    font-size:14px;
+    background:transparent;
+    color:var(--paper);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:10px 18px;
+    cursor:pointer;
+  }
+  .ghost-btn:hover{ border-color:var(--amber-dim); }
+
+  /* ---------- test summary / review ---------- */
+  .test-score-hero{
+    text-align:center;
+    padding:34px 0 10px;
+  }
+  .test-score-big{
+    font-family:var(--mono);
+    font-size:58px;
+    font-weight:650;
+  }
+  .test-score-big.pass{ color:var(--teal); }
+  .test-score-big.fail{ color:var(--rust); }
+  .test-score-sub{
+    color:var(--paper-dim);
+    margin-top:8px;
+    font-size:14px;
+  }
+  .test-pass-note{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--paper-dim);
+    margin-top:4px;
+  }
+
+  .review-list{
+    margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .review-item{
+    background:var(--navy-900);
+    border:1px solid var(--rule);
+    border-radius:8px;
+    padding:16px 18px;
+  }
+  .review-item.wrong{ border-left:3px solid var(--rust); }
+  .review-item.right{ border-left:3px solid var(--teal); }
+  .review-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .review-subject{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--amber);
+    letter-spacing:.06em;
+  }
+  .review-mark{
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+  }
+  .review-mark.right{ color:var(--teal); }
+  .review-mark.wrong{ color:var(--rust); }
+  .review-q{
+    font-size:14.5px;
+    margin:0 0 10px;
+    white-space:pre-line;
+  }
+  .review-image{
+    margin:0 0 12px;
+    border:1px solid var(--rule);
+    border-radius:4px;
+    overflow:hidden;
+    background:#fff;
+    max-width:320px;
+  }
+  .review-image img{ display:block; width:100%; height:auto; }
+  .review-answers{
+    font-size:13.5px;
+    line-height:1.7;
+  }
+  .review-your-answer{ color:var(--paper-dim); }
+  .review-your-answer.wrong-text{ color:var(--rust); }
+  .review-correct-answer{ color:var(--teal); }
+  .review-explanation{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid var(--rule);
+    font-size:13.5px;
+    color:var(--paper-dim);
+  }
+
+  .hidden{ display:none !important; }
+
+  footer{
+    text-align:center;
+    color:var(--paper-dim);
+    font-family:var(--mono);
+    font-size:11px;
+    padding:30px 20px 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-mark">SPL</span>
+    <span class="brand-name" id="brandName">Theory Trainer</span>
+  </div>
+  <div class="topbar-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" id="langEnBtn">EN</button>
+      <button class="lang-btn" id="langCsBtn">CS</button>
+    </div>
+    <div class="score-pill" id="scorePill"></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- SUBJECT PICKER -->
+  <div id="screenPicker">
+    <div class="intro">
+      <h1 id="pickerTitle">Choose a subject</h1>
+      <p id="pickerIntro"></p>
+    </div>
+
+    <button class="test-card" id="testCard">
+      <div class="test-card-label" id="testCardLabel">EXAM SIMULATION</div>
+      <div class="test-card-title" id="testCardTitle">ÚCL question mix (120 questions)</div>
+      <div class="test-card-desc" id="testCardDesc"></div>
+    </button>
+
+    <div class="section-label" id="practiceLabel">PRACTICE BY SUBJECT</div>
+
+    <div class="length-picker">
+      <div class="section-label" id="lengthLabel">QUESTIONS PER ROUND</div>
+      <div class="length-options" id="lengthOptions"></div>
+    </div>
+    <div class="subject-grid" id="subjectGrid"></div>
+  </div>
+
+  <!-- PRACTICE QUIZ -->
+  <div id="screenQuiz" class="hidden">
+    <div class="quiz-header">
+      <button class="back-link" id="backBtn">&larr; <span id="backLabel">subjects</span></button>
+      <span class="progress-tag" id="progressTag"></span>
+    </div>
+    <div class="qcard" id="qcard"></div>
+  </div>
+
+  <!-- TEST MODE -->
+  <div id="screenTest" class="hidden">
+    <div class="quiz-header">
+      <button class="back-link" id="testBackBtn">&larr; <span id="testBackLabel">subjects</span></button>
+      <span class="progress-tag" id="testProgressTag"></span>
+    </div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="testProgressFill"></div></div>
+    <div class="qcard" id="testQcard"></div>
+  </div>
+
+  <!-- PRACTICE SUMMARY -->
+  <div id="screenSummary" class="hidden">
+    <div class="summary">
+      <div class="big" id="summaryScore"></div>
+      <div class="sub" id="summarySub"></div>
+      <div class="summary-actions">
+        <button class="next-btn" id="retryBtn">Practice again</button>
+        <button class="ghost-btn" id="homeBtn">Choose another subject</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST SUMMARY + REVIEW -->
+  <div id="screenTestSummary" class="hidden">
+    <div class="test-score-hero">
+      <div class="test-score-big" id="testScoreBig"></div>
+      <div class="test-score-sub" id="testScoreSub"></div>
+      <div class="test-pass-note" id="testPassNote"></div>
+      <div class="summary-actions">
+        <button class="next-btn" id="testRetryBtn">Retake test</button>
+        <button class="ghost-btn" id="testHomeBtn">Back to subjects</button>
+      </div>
+    </div>
+    <div class="review-list" id="reviewList"></div>
+  </div>
+
+</div>
+
+<footer id="footerNote">ECQB-PPL SPL question bank &middot; local practice tool, not an official exam</footer>
+
+<script>
+const LENGTH_CHOICES = [10, 15, 25, 50, 'all'];
+let roundLength = 15;
+let lang = 'en'; // 'en' or 'cs'
+
+// ÚCL official exam composition (subject_code -> question count)
+const UCL_RATIO = {
+  '10-ALW': 12, '20-HPL': 12, '30-MET': 12, '40-COM': 12, '51-PFA': 12,
+  '60-OPR': 12, '70-FPP': 16, '80-AGK': 16, '90-NAV': 16
+};
+
+const I18N = {
+  en: {
+    brandName: 'Theory Trainer',
+    pickerTitle: 'Choose a subject',
+    pickerIntro: 'Questions are drawn at random from the official SPL question bank. Every answer is checked instantly, and a short explanation appears if you get one wrong.',
+    testCardLabel: 'EXAM SIMULATION',
+    testCardTitle: 'ÚCL question mix (120 questions)',
+    testCardDesc: 'Mixed questions from all 9 subjects, in the same proportion as the official ÚCL exam. Answers are not revealed until the end — you get a percentage score and a full breakdown afterwards.',
+    practiceLabel: 'PRACTICE BY SUBJECT',
+    lengthLabel: 'QUESTIONS PER ROUND',
+    allSubjects: 'ALL SUBJECTS',
+    mixedPractice: 'Mixed practice',
+    questionsTotal: 'questions total',
+    questions: 'questions',
+    backSubjects: 'subjects',
+    correctLabel: 'CORRECT',
+    notQuiteLabel: 'NOT QUITE',
+    correctAnswerLabel: 'Correct answer',
+    wellDone: 'Well done.',
+    nextQuestion: 'Next question \u2192',
+    practiceAgain: 'Practice again',
+    chooseAnother: 'Choose another subject',
+    correctThisRound: 'correct this round',
+    next: 'Next \u2192',
+    finish: 'Finish test',
+    yourAnswer: 'Your answer',
+    testScoreLabel: 'correct',
+    passNoteTemplate: n => `Typical EASA/ÚCL pass mark is 75% (${n}/120). This is a practice tool, not an official result.`,
+    reviewHeading: 'Question review',
+    figureMissing: 'Figure not available in this excerpt of the question bank.',
+    retakeTest: 'Retake test',
+    backToSubjects: 'Back to subjects',
+    pass: 'PASS',
+    fail: 'BELOW PASS MARK',
+    footer: 'ECQB-PPL SPL question bank \u00b7 local practice tool, not an official exam',
+  },
+  cs: {
+    brandName: 'Trenažér teorie',
+    pickerTitle: 'Vyber si předmět',
+    pickerIntro: 'Otázky se náhodně vybírají z oficiální databáze SPL. Každá odpověď se ověří okamžitě a při chybě se zobrazí krátké vysvětlení.',
+    testCardLabel: 'SIMULACE ZKOUŠKY',
+    testCardTitle: 'Mix otázek ÚCL (120 otázek)',
+    testCardDesc: 'Namíchané otázky ze všech 9 předmětů ve stejném poměru jako u oficiální zkoušky ÚCL. Správnost odpovědí se ukáže až na konci — dostaneš procentuální úspěšnost a rozbor všech otázek.',
+    practiceLabel: 'PROCVIČOVÁNÍ PODLE PŘEDMĚTU',
+    lengthLabel: 'POČET OTÁZEK V KOLE',
+    allSubjects: 'VŠECHNY PŘEDMĚTY',
+    mixedPractice: 'Smíšené procvičování',
+    questionsTotal: 'otázek celkem',
+    questions: 'otázek',
+    backSubjects: 'předměty',
+    correctLabel: 'SPRÁVNĚ',
+    notQuiteLabel: 'NESPRÁVNĚ',
+    correctAnswerLabel: 'Správná odpověď',
+    wellDone: 'Výborně.',
+    nextQuestion: 'Další otázka \u2192',
+    practiceAgain: 'Procvičit znovu',
+    chooseAnother: 'Vybrat jiný předmět',
+    correctThisRound: 'správně v tomto kole',
+    next: 'Další \u2192',
+    finish: 'Dokončit test',
+    yourAnswer: 'Tvoje odpověď',
+    testScoreLabel: 'správně',
+    passNoteTemplate: n => `Obvyklá hranice úspěšnosti EASA/ÚCL je 75 % (${n}/120). Toto je cvičný nástroj, ne oficiální výsledek.`,
+    reviewHeading: 'Rozbor otázek',
+    figureMissing: 'Obrázek není v tomto výtahu databáze k dispozici.',
+    retakeTest: 'Zopakovat test',
+    backToSubjects: 'Zpět na předměty',
+    pass: 'SPLNĚNO',
+    fail: 'POD HRANICÍ ÚSPĚŠNOSTI',
+    footer: 'Databáze otázek ECQB-PPL SPL \u00b7 cvičný nástroj, ne oficiální zkouška',
+  }
+};
+
+let ALL_QUESTIONS = [];
+let SUBJECTS = [];
+let currentPool = [];
+let currentIndex = 0;
+let currentAnswered = false;
+let sessionCorrect = 0;
+let sessionTotal = 0;
+let roundCorrect = 0;
+let lastSubjectCode = null;
+
+let testPool = [];
+let testIndex = 0;
+let testAnswers = []; // { q, selectedLetter, correct }
+let testAnswered = false;
+
+const screenPicker = document.getElementById('screenPicker');
+const screenQuiz = document.getElementById('screenQuiz');
+const screenTest = document.getElementById('screenTest');
+const screenSummary = document.getElementById('screenSummary');
+const screenTestSummary = document.getElementById('screenTestSummary');
+const subjectGrid = document.getElementById('subjectGrid');
+const qcard = document.getElementById('qcard');
+const testQcard = document.getElementById('testQcard');
+const progressTag = document.getElementById('progressTag');
+const testProgressTag = document.getElementById('testProgressTag');
+const testProgressFill = document.getElementById('testProgressFill');
+const scorePill = document.getElementById('scorePill');
+
+function t(key){ return I18N[lang][key]; }
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function cleanQuestionText(text){
+  return text
+    .split('\n')
+    .filter(line => !/^See (figure|annex)\s*\(/i.test(line.trim()) && !/^Siehe Anlage/i.test(line.trim()))
+    .join('\n')
+    .trim();
+}
+
+function qf(q, field){
+  // localized field accessor, e.g. qf(q, 'question')
+  return q[lang][field];
+}
+
+function applyStaticText(){
+  document.getElementById('brandName').textContent = t('brandName');
+  document.getElementById('pickerTitle').textContent = t('pickerTitle');
+  document.getElementById('pickerIntro').textContent = t('pickerIntro');
+  document.getElementById('testCardLabel').textContent = t('testCardLabel');
+  document.getElementById('testCardTitle').textContent = t('testCardTitle');
+  document.getElementById('testCardDesc').textContent = t('testCardDesc');
+  document.getElementById('practiceLabel').textContent = t('practiceLabel');
+  document.getElementById('lengthLabel').textContent = t('lengthLabel');
+  document.getElementById('backLabel').textContent = t('backSubjects');
+  document.getElementById('testBackLabel').textContent = t('backSubjects');
+  document.getElementById('retryBtn').textContent = t('practiceAgain');
+  document.getElementById('homeBtn').textContent = t('chooseAnother');
+  document.getElementById('testRetryBtn').textContent = t('retakeTest');
+  document.getElementById('testHomeBtn').textContent = t('backToSubjects');
+  document.getElementById('footerNote').textContent = t('footer');
+  document.getElementById('langEnBtn').classList.toggle('active', lang==='en');
+  document.getElementById('langCsBtn').classList.toggle('active', lang==='cs');
+  updateScorePill();
+}
+
+function updateScorePill(){
+  if(sessionTotal === 0){ scorePill.innerHTML = ''; return; }
+  scorePill.innerHTML =
+    `<span>${sessionTotal}</span>` +
+    `<span class="correct">&#10003; ${sessionCorrect}</span>` +
+    `<span class="incorrect">&#10007; ${sessionTotal - sessionCorrect}</span>`;
+}
+
+async function init(){
+  const res = await fetch('questions_bilingual.json');
+  ALL_QUESTIONS = await res.json();
+
+  const bySubject = {};
+  for(const q of ALL_QUESTIONS){
+    if(!bySubject[q.subject_code]){
+      bySubject[q.subject_code] = {code:q.subject_code, count:0};
+    }
+    bySubject[q.subject_code].count++;
+  }
+  SUBJECTS = Object.values(bySubject).sort((a,b)=>a.code.localeCompare(b.code));
+
+  applyStaticText();
+  renderLengthOptions();
+  renderSubjectGrid();
+}
+
+function setLang(newLang){
+  lang = newLang;
+  applyStaticText();
+  renderSubjectGrid();
+  // Re-render whichever screen is active, preserving state
+  if(!screenQuiz.classList.contains('hidden')) renderQuestion();
+  if(!screenTest.classList.contains('hidden')) renderTestQuestion();
+  if(!screenTestSummary.classList.contains('hidden')) renderTestSummary();
+}
+
+function renderLengthOptions(){
+  const container = document.getElementById('lengthOptions');
+  container.innerHTML = '';
+  LENGTH_CHOICES.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'length-btn' + (roundLength === choice ? ' active' : '');
+    btn.textContent = choice === 'all' ? (lang==='en'?'All':'Vše') : choice;
+    btn.onclick = () => {
+      roundLength = choice;
+      renderLengthOptions();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function renderSubjectGrid(){
+  subjectGrid.innerHTML = '';
+
+  const allCard = document.createElement('button');
+  allCard.className = 'subject-card all';
+  allCard.innerHTML = `
+    <div class="subject-code">${t('allSubjects')}</div>
+    <div class="subject-title">${t('mixedPractice')}</div>
+    <div class="subject-count">${ALL_QUESTIONS.length} ${t('questionsTotal')}</div>
+  `;
+  allCard.onclick = () => startRound(null);
+  subjectGrid.appendChild(allCard);
+
+  for(const s of SUBJECTS){
+    const sampleQ = ALL_QUESTIONS.find(q => q.subject_code === s.code);
+    const name = sampleQ ? sampleQ[lang].subject : s.code;
+    const card = document.createElement('button');
+    card.className = 'subject-card';
+    card.innerHTML = `
+      <div class="subject-code">${s.code}</div>
+      <div class="subject-title">${escapeHtml(name)}</div>
+      <div class="subject-count">${s.count} ${t('questions')}</div>
+    `;
+    card.onclick = () => startRound(s.code);
+    subjectGrid.appendChild(card);
+  }
+}
+
+/* ================= PRACTICE MODE ================= */
+
+function startRound(subjectCode){
+  lastSubjectCode = subjectCode;
+  const source = subjectCode ? ALL_QUESTIONS.filter(q=>q.subject_code===subjectCode) : ALL_QUESTIONS;
+  const n = roundLength === 'all' ? source.length : Math.min(roundLength, source.length);
+  currentPool = shuffle(source).slice(0, n);
+  currentIndex = 0;
+  roundCorrect = 0;
+
+  screenPicker.classList.add('hidden');
+  screenTestSummary.classList.add('hidden');
+  screenTest.classList.add('hidden');
+  screenSummary.classList.add('hidden');
+  screenQuiz.classList.remove('hidden');
+
+  renderQuestion();
+}
+
+function renderQuestion(){
+  currentAnswered = false;
+  const q = currentPool[currentIndex];
+  progressTag.textContent = `${currentIndex+1} / ${currentPool.length}`;
+
+  const opts = [
+    {letter:'A', text:qf(q,'option_a')},
+    {letter:'B', text:qf(q,'option_b')},
+    {letter:'C', text:qf(q,'option_c')},
+    {letter:'D', text:qf(q,'option_d')},
+  ];
+
+  let imageHtml = '';
+  if(q.annex_reference){
+    if(q.image_available && q.image_file){
+      imageHtml = `<div class="qimage"><img src="${q.image_file}" alt=""></div>`;
+    } else {
+      imageHtml = `<div class="qimage-missing">${t('figureMissing')}</div>`;
+    }
+  }
+
+  qcard.innerHTML = `
+    <div class="qmeta">
+      <span class="qsubject">${q.subject_code}</span>
+      <span class="qpoints">${q.points ? q.points + ' pt' : ''}</span>
+    </div>
+    <p class="qtext"></p>
+    ${imageHtml}
+    <div class="options" id="optionsList"></div>
+    <div id="resultArea"></div>
+    <div class="next-row hidden" id="nextRow">
+      <button class="next-btn" id="nextBtn">${t('nextQuestion')}</button>
+    </div>
+  `;
+  qcard.querySelector('.qtext').textContent = cleanQuestionText(qf(q,'question'));
+
+  const optionsList = document.getElementById('optionsList');
+  opts.forEach(o=>{
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="opt-letter">${o.letter}</span><span>${escapeHtml(o.text)}</span>`;
+    btn.onclick = () => selectAnswer(o.letter, q);
+    optionsList.appendChild(btn);
+  });
+
+  document.getElementById('nextBtn').onclick = () => {
+    currentIndex++;
+    if(currentIndex >= currentPool.length){
+      showSummary();
+    } else {
+      renderQuestion();
+    }
+  };
+}
+
+function selectAnswer(letter, q){
+  if(currentAnswered) return;
+  currentAnswered = true;
+
+  const correctLetter = qf(q,'correct_option');
+  const isCorrect = letter === correctLetter;
+  sessionTotal++;
+  if(isCorrect){ sessionCorrect++; roundCorrect++; }
+  updateScorePill();
+
+  const buttons = document.querySelectorAll('#optionsList .option');
+  buttons.forEach((btn, i) => {
+    const optLetter = 'ABCD'[i];
+    btn.classList.add('locked');
+    if(optLetter === correctLetter){
+      btn.classList.add('correct');
+    } else if(optLetter === letter){
+      btn.classList.add('incorrect');
+    } else {
+      btn.classList.add('dim');
+    }
+  });
+
+  const resultArea = document.getElementById('resultArea');
+  if(isCorrect){
+    resultArea.innerHTML = `
+      <div class="result-banner correct">
+        <div class="result-title">${t('correctLabel')}</div>
+        <div class="result-explanation">${t('wellDone')}</div>
+      </div>
+    `;
+  } else {
+    const correctText = q[lang]['option_' + correctLetter.toLowerCase()];
+    resultArea.innerHTML = `
+      <div class="result-banner incorrect">
+        <div class="result-title">${t('notQuiteLabel')}</div>
+        <div class="result-explanation"><strong>${t('correctAnswerLabel')} (${correctLetter}):</strong> ${escapeHtml(correctText)}<br><br>${escapeHtml(qf(q,'explanation') || '')}</div>
+      </div>
+    `;
+  }
+
+  document.getElementById('nextRow').classList.remove('hidden');
+}
+
+function showSummary(){
+  screenQuiz.classList.add('hidden');
+  screenSummary.classList.remove('hidden');
+  document.getElementById('summaryScore').textContent = `${roundCorrect} / ${currentPool.length}`;
+  document.getElementById('summarySub').textContent = t('correctThisRound');
+}
+
+document.getElementById('backBtn').onclick = () => {
+  screenQuiz.classList.add('hidden');
+  screenPicker.classList.remove('hidden');
+};
+document.getElementById('retryBtn').onclick = () => {
+  startRound(lastSubjectCode);
+};
+document.getElementById('homeBtn').onclick = () => {
+  screenSummary.classList.add('hidden');
+  screenPicker.classList.remove('hidden');
+};
+
+/* ================= TEST MODE (ÚCL ratio, deferred feedback) ================= */
+
+function buildTestPool(){
+  let pool = [];
+  for(const code in UCL_RATIO){
+    const n = UCL_RATIO[code];
+    const source = ALL_QUESTIONS.filter(q => q.subject_code === code);
+    const picked = shuffle(source).slice(0, Math.min(n, source.length));
+    pool = pool.concat(picked);
+  }
+  return shuffle(pool);
+}
+
+function startTest(){
+  testPool = buildTestPool();
+  testIndex = 0;
+  testAnswers = [];
+
+  screenPicker.classList.add('hidden');
+  screenSummary.classList.add('hidden');
+  screenTestSummary.classList.add('hidden');
+  screenQuiz.classList.add('hidden');
+  screenTest.classList.remove('hidden');
+
+  renderTestQuestion();
+}
+
+function renderTestQuestion(){
+  testAnswered = false;
+  const q = testPool[testIndex];
+  testProgressTag.textContent = `${testIndex+1} / ${testPool.length}`;
+  testProgressFill.style.width = `${((testIndex)/testPool.length)*100}%`;
+
+  const opts = [
+    {letter:'A', text:qf(q,'option_a')},
+    {letter:'B', text:qf(q,'option_b')},
+    {letter:'C', text:qf(q,'option_c')},
+    {letter:'D', text:qf(q,'option_d')},
+  ];
+
+  let imageHtml = '';
+  if(q.annex_reference){
+    if(q.image_available && q.image_file){
+      imageHtml = `<div class="qimage"><img src="${q.image_file}" alt=""></div>`;
+    } else {
+      imageHtml = `<div class="qimage-missing">${t('figureMissing')}</div>`;
+    }
+  }
+
+  testQcard.innerHTML = `
+    <div class="qmeta">
+      <span class="qsubject">${q.subject_code}</span>
+      <span class="qpoints">${q.points ? q.points + ' pt' : ''}</span>
+    </div>
+    <p class="qtext"></p>
+    ${imageHtml}
+    <div class="options" id="testOptionsList"></div>
+    <div class="next-row" id="testNextRow">
+      <button class="next-btn" id="testNextBtn" disabled>${testIndex === testPool.length-1 ? t('finish') : t('next')}</button>
+    </div>
+  `;
+  testQcard.querySelector('.qtext').textContent = cleanQuestionText(qf(q,'question'));
+
+  let selectedLetter = null;
+  const optionsList = document.getElementById('testOptionsList');
+  opts.forEach(o=>{
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="opt-letter">${o.letter}</span><span>${escapeHtml(o.text)}</span>`;
+    btn.onclick = () => {
+      selectedLetter = o.letter;
+      document.querySelectorAll('#testOptionsList .option').forEach(b => b.classList.remove('chosen-neutral'));
+      btn.classList.add('chosen-neutral');
+      document.getElementById('testNextBtn').disabled = false;
+    };
+    optionsList.appendChild(btn);
+  });
+
+  document.getElementById('testNextBtn').onclick = () => {
+    if(!selectedLetter) return;
+    const correctLetter = qf(q,'correct_option');
+    testAnswers.push({
+      q: q,
+      selectedLetter: selectedLetter,
+      correct: selectedLetter === correctLetter
+    });
+    testIndex++;
+    if(testIndex >= testPool.length){
+      showTestSummary();
+    } else {
+      renderTestQuestion();
+    }
+  };
+}
+
+function showTestSummary(){
+  screenTest.classList.add('hidden');
+  screenTestSummary.classList.remove('hidden');
+  renderTestSummary();
+}
+
+function renderTestSummary(){
+  const correctCount = testAnswers.filter(a => a.correct).length;
+  const total = testAnswers.length;
+  const pct = Math.round((correctCount/total)*100);
+  const passed = pct >= 75;
+
+  const scoreBig = document.getElementById('testScoreBig');
+  scoreBig.textContent = `${pct}%`;
+  scoreBig.className = 'test-score-big ' + (passed ? 'pass' : 'fail');
+
+  document.getElementById('testScoreSub').textContent = `${correctCount} / ${total} ${t('testScoreLabel')} \u00b7 ${passed ? t('pass') : t('fail')}`;
+  document.getElementById('testPassNote').textContent = t('passNoteTemplate')(correctCount);
+
+  const reviewList = document.getElementById('reviewList');
+  reviewList.innerHTML = '';
+  testAnswers.forEach((a, idx) => {
+    const q = a.q;
+    const correctLetter = qf(q,'correct_option');
+    const yourText = q[lang]['option_' + a.selectedLetter.toLowerCase()];
+    const correctText = q[lang]['option_' + correctLetter.toLowerCase()];
+
+    let imageHtml = '';
+    if(q.annex_reference && q.image_available && q.image_file){
+      imageHtml = `<div class="review-image"><img src="${q.image_file}" alt=""></div>`;
+    }
+
+    const item = document.createElement('div');
+    item.className = 'review-item ' + (a.correct ? 'right' : 'wrong');
+    item.innerHTML = `
+      <div class="review-head">
+        <span class="review-subject">${q.subject_code} \u00b7 #${idx+1}</span>
+        <span class="review-mark ${a.correct ? 'right' : 'wrong'}">${a.correct ? '\u2713 ' + t('correctLabel') : '\u2717 ' + t('notQuiteLabel')}</span>
+      </div>
+      <p class="review-q">${escapeHtml(cleanQuestionText(qf(q,'question')))}</p>
+      ${imageHtml}
+      <div class="review-answers">
+        <div class="review-your-answer ${a.correct ? '' : 'wrong-text'}">${t('yourAnswer')}: <strong>${a.selectedLetter}</strong> \u2014 ${escapeHtml(yourText)}</div>
+        ${a.correct ? '' : `<div class="review-correct-answer">${t('correctAnswerLabel')}: <strong>${correctLetter}</strong> \u2014 ${escapeHtml(correctText)}</div>`}
+      </div>
+      ${a.correct ? '' : `<div class="review-explanation">${escapeHtml(qf(q,'explanation') || '')}</div>`}
+    `;
+    reviewList.appendChild(item);
+  });
+}
+
+document.getElementById('testCard').onclick = () => startTest();
+document.getElementById('testBackBtn').onclick = () => {
+  screenTest.classList.add('hidden');
+  screenPicker.classList.remove('hidden');
+};
+document.getElementById('testRetryBtn').onclick = () => startTest();
+document.getElementById('testHomeBtn').onclick = () => {
+  screenTestSummary.classList.add('hidden');
+  screenPicker.classList.remove('hidden');
+};
+
+document.getElementById('langEnBtn').onclick = () => setLang('en');
+document.getElementById('langCsBtn').onclick = () => setLang('cs');
+
+init();
+</script>
+
+</body>
+</html>
